@@ -72,7 +72,7 @@ const is = (required: boolean = true, fn: any): any => ({
 })
 // 手机号
 const phoneBoolean = (value: string): boolean => {
-  return !/(^[0-9]{4}\-[0-9]{7,8}$)|^[0-9]{7,8}$|^1\d{10}$/.test(value)
+  return !/(^[0][0-9]{2,3}\-?[0-9]{7,8}$)|^[0-9]{7,8}$|^1[3-9]\d{9}$/.test(value)
 }
 const blurPhone = is(true, phoneBoolean)
 const blurPhoneNotRequired = is(false, phoneBoolean)
