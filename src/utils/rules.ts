@@ -1,3 +1,5 @@
+import { checkIdCardNo } from './idCard'
+
 interface _rulesT {
   Any: object,
   Number: object,
@@ -70,7 +72,7 @@ const is = (required: boolean = true, fn: any): any => ({
   },
   trigger: "blur"
 })
-// 手机号
+// 手机号/座机
 const phoneBoolean = (value: string): boolean => {
   return !/(^[0][0-9]{2,3}\-?[0-9]{7,8}$)|^[0-9]{7,8}$|^1[3-9]\d{9}$/.test(value)
 }
@@ -82,6 +84,12 @@ const mobileBoolean = (value: string): boolean => {
 }
 const blurMobile = is(true, mobileBoolean)
 const blurMobileNotRequired = is(false, mobileBoolean)
+// 座机
+const telBoolean = (value: string): boolean => {
+  return !/(^[0][0-9]{2,3}\-?[0-9]{7,8}$)|^[0-9]{7,8}$/.test(value)
+}
+const blurTel = is(true, telBoolean)
+const blurTelNotRequired = is(false, telBoolean)
 // 18位字符
 const codeBoolean18 = (value: string): boolean => {
   return !/(^[0-9|A-Z]{15}$)|(^[0-9A-Z]{18}$)/.test(value)
@@ -108,6 +116,10 @@ const emailBoolean = (value: string): boolean => {
 }
 const blurEmail = is(true, emailBoolean)
 const blurEmailNotRequired = is(false, emailBoolean)
+// 身份证验证
+
+const blurIdCard = is(true, (value: any) => !checkIdCardNo(value))
+const blurIdCardNotRequired = is(false, (value: any) => !checkIdCardNo(value))
 // 多数据验证
 const slot = (fn: any): any => function (_this: any, attr: string, type: string = 'time', size: string = 'min', obj: any = 'form') {
   return {
@@ -176,8 +188,12 @@ export {
   blurPhoneNotRequired,
   blurMobile,
   blurMobileNotRequired,
+  blurTel,
+  blurTelNotRequired,
   blurCode18,
   blurCode18NotRequired,
+  blurIdCard,
+  blurIdCardNotRequired,
   blurName,
   blurNameNotRequired,
   blurZip,

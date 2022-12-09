@@ -33,15 +33,82 @@ const fnArrFlat = (arr: any[], option: object = {}) => {
       label: el[key],
       value: el[value],
     }
-    if (children) {
+    if (el[children]) {
       option.children = fnArrFlat(el[children], _option)
     }
     return option
   })
 }
 
+/**
+* mixin 字典生成器
+* @param {Array} arr  需要处理的数组
+* @param {Object:{child,key,value}} option 需要处理的对应的字段
+* @returns {Object}
+*/
+
+interface watch {
+  [key: string]: any
+}
+
+interface list {
+  [key: string]: any
+}
+
+interface vuex {
+  mapGetters: any,
+}
+
+interface generateZd {
+  data: Function,
+  watch: object,
+  computed: object,
+  created(this: generateZd): any,
+  [key: string]: any
+}
+
+const fnGenerateMixinZd = (zd: any[], vuex: vuex) => {
+  // watch 监听
+  const watch: watch = {}
+  // 循环字典
+  for (let el of zd) {
+    watch[el] = function (data: any) {
+      this.list[el] = data;
+    }
+  }
+  const { mapGetters } = vuex
+  const mixin: generateZd = {
+    data() {
+      return {
+        list: {}
+      }
+    },
+    watch,
+    computed: {
+      ...mapGetters(zd)
+    },
+    created() {
+      // list 字典对象
+      const list: list = {}
+      for (let el of zd) {
+        list[el] = this[el]
+      }
+      // 初始化字典
+      this.list = {
+        ...this.list,
+        ...list
+      }
+    },
+  }
+  return mixin
+}
+
+
+
+
 export {
   fnArrToJson,
-  fnArrFlat
+  fnArrFlat,
+  fnGenerateMixinZd
 }
 
